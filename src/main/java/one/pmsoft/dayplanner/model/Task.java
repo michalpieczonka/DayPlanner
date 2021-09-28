@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @NotBlank (message = "Task's description can not be empty")
@@ -23,7 +23,7 @@ public class Task {
         return id;
     }
 
-    void setId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
