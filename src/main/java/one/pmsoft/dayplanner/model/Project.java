@@ -44,7 +44,7 @@ public class Project {
         this.groups = groups;
     }
 
-    Set<ProjectStep> getSteps() {
+    public Set<ProjectStep> getSteps() {
         return steps;
     }
 
