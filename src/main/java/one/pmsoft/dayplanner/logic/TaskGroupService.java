@@ -6,12 +6,17 @@ import one.pmsoft.dayplanner.model.TaskGroupRepository;
 import one.pmsoft.dayplanner.model.TaskRepository;
 import one.pmsoft.dayplanner.model.projection.GroupReadModel;
 import one.pmsoft.dayplanner.model.projection.GroupWriteModel;
+import org.hibernate.id.Configurable;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequestScope
 public class TaskGroupService {
 
     private TaskGroupRepository repository;
@@ -20,10 +25,6 @@ public class TaskGroupService {
     TaskGroupService(final TaskGroupRepository repository,  final TaskRepository taskRepository) {
         this.repository = repository;
         this.taskRepository = taskRepository;
-    }
-
-    TaskGroupService(final TaskGroupRepository repository) {
-        this.repository = repository;
     }
 
     //Tworzenie grupy z WriteModelu
@@ -48,5 +49,6 @@ public class TaskGroupService {
        TaskGroup result = repository.findById(groupId).orElseThrow(
                ()-> new IllegalArgumentException("TaskGroup with given ID not found"));
        result.setDone(!result.isDone());
+       repository.save(result);
     }
 }
