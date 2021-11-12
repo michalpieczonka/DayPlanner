@@ -3,14 +3,12 @@ package one.pmsoft.dayplanner.logic;
 import one.pmsoft.dayplanner.TaskConfigurationProperties;
 import one.pmsoft.dayplanner.model.*;
 import one.pmsoft.dayplanner.model.projection.GroupReadModel;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-@Service
+
 public class ProjectService {
 
     private ProjectRepository repository;
