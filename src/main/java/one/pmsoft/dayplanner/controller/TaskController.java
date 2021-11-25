@@ -4,28 +4,30 @@ import one.pmsoft.dayplanner.model.Task;
 import one.pmsoft.dayplanner.model.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.beans.Transient;
+
 import java.net.URI;
 import java.util.List;
 
 
 @RestController
+@RequestMapping("/tasks")
 public class TaskController {
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class); //Tworzenie logow z klasy TaskController
     private final TaskRepository repository;
 
-    TaskController(final TaskRepository repository){
+    TaskController(@Qualifier("sqlTaskRepository") final TaskRepository repository){
         this.repository = repository;
     }
 
     //Dla post zwracamy zwykle 201
-    @PostMapping(path = "/tasks")
+    @PostMapping
     ResponseEntity<Task> createTask(@RequestBody @Valid Task newTask){
         logger.info("New task has been received");
         Task result = repository.save(newTask);
@@ -34,7 +36,7 @@ public class TaskController {
 
 
     //W ponizszy kontroler wchodzimy tylko wtedy, gdy w zadaniu nie ma ponizszych parametrow
-    @GetMapping(value = "/tasks", params = {"!sort","!page","!size"})
+    @GetMapping(params = {"!sort","!page","!size"})
     //Ponizej zapis rownowazny wynikajacy z hierarchii
     //@RequestMapping(method = RequestMethod.GET, path = "/tasks")
     //Reprezentuje odpowiedz
@@ -43,13 +45,13 @@ public class TaskController {
         return ResponseEntity.ok(repository.findAll());
     }
 
-    @GetMapping(value = "/tasks")
+    @GetMapping
     ResponseEntity<List<Task>> readAllTasks(Pageable page){
         logger.info("Custom pageable.");
         return ResponseEntity.ok(repository.findAll(page).getContent());
     }
 
-    @GetMapping(value = "/tasks/{id}")
+    @GetMapping(value = "/{id}")
     ResponseEntity<Task> readTask(@PathVariable int id){
         //Zapis rownowazny
       // if(!repository.existsById(id)){
@@ -61,8 +63,15 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/search/done")
+    ResponseEntity<List<Task>> readDoneTasks(@RequestParam(defaultValue = "true") boolean state){
+        return ResponseEntity.ok(
+                repository.findByDone(state)
+        );
+    }
 
-    @PutMapping("/tasks/{id}")
+
+    @PutMapping("/{id}")
     ResponseEntity<?> updateTask(@PathVariable int id, @RequestBody @Valid Task toUpdate){
         logger.info("Task to update has been received.");
         if(!repository.existsById(id)){
@@ -77,7 +86,7 @@ public class TaskController {
     }
 
     @Transactional
-    @PatchMapping("/tasks/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> toggleTask(@PathVariable int id){
         logger.info("Task to update has been received.");
         if(!repository.existsById(id)){

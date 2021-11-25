@@ -1,6 +1,7 @@
 package one.pmsoft.dayplanner.model.projection;
 
 import one.pmsoft.dayplanner.model.Task;
+import one.pmsoft.dayplanner.model.TaskGroup;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +26,7 @@ public class GroupTaskWriteModel {
         this.description = description;
     }
 
-    public Task toTask(){
-       return new Task(description,deadline);
+    public Task toTask(TaskGroup group){
+       return new Task(description,deadline, group);
     }
 }
