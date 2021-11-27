@@ -14,10 +14,13 @@ public class GroupReadModel {
     /**
      * Deadline from the latest task in group.
      */
+    private int id;
     private LocalDateTime deadline;
     private Set<GroupTaskReadModel> tasks;
 
+
     public GroupReadModel(TaskGroup source){
+        id = source.getId();
         description = source.getDescription();
         source.getTasks().stream()
                 .map(Task::getDeadline)
@@ -51,4 +54,8 @@ public class GroupReadModel {
     public void setTasks(Set<GroupTaskReadModel> tasks) {
         this.tasks = tasks;
     }
+    public int getId() {
+        return id;
+    }
+
 }

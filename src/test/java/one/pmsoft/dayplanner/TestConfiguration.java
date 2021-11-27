@@ -52,6 +52,11 @@ public class TestConfiguration {
             public List<Task> findByDone(boolean done) {
                 return null;
             }
+
+            @Override
+            public List<Task> findAllByGroup_Id(Integer groupID) {
+                return List.of();
+            }
         };
     }
 }

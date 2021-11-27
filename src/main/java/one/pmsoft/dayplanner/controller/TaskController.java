@@ -1,5 +1,6 @@
 package one.pmsoft.dayplanner.controller;
 
+import one.pmsoft.dayplanner.logic.TaskService;
 import one.pmsoft.dayplanner.model.Task;
 import one.pmsoft.dayplanner.model.TaskRepository;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 
 @RestController
@@ -21,9 +23,11 @@ import java.util.List;
 public class TaskController {
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class); //Tworzenie logow z klasy TaskController
     private final TaskRepository repository;
+    private final TaskService service;
 
-    TaskController(@Qualifier("sqlTaskRepository") final TaskRepository repository){
+    TaskController(@Qualifier("sqlTaskRepository") final TaskRepository repository, TaskService service){
         this.repository = repository;
+        this.service = service;
     }
 
     //Dla post zwracamy zwykle 201
@@ -40,9 +44,9 @@ public class TaskController {
     //Ponizej zapis rownowazny wynikajacy z hierarchii
     //@RequestMapping(method = RequestMethod.GET, path = "/tasks")
     //Reprezentuje odpowiedz
-    ResponseEntity<List<Task>> readAllTasks(){
+    CompletableFuture<ResponseEntity<List<Task>>> readAllTasks(){
         logger.warn("Exposing all the tasks!");
-        return ResponseEntity.ok(repository.findAll());
+        return service.findAllAsync().thenApply(ResponseEntity::ok);
     }
 
     @GetMapping
