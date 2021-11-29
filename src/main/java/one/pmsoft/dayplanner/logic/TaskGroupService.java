@@ -1,5 +1,6 @@
 package one.pmsoft.dayplanner.logic;
 
+import one.pmsoft.dayplanner.model.Project;
 import one.pmsoft.dayplanner.model.TaskGroup;
 import one.pmsoft.dayplanner.model.TaskGroupRepository;
 import one.pmsoft.dayplanner.model.TaskRepository;
@@ -22,7 +23,11 @@ public class TaskGroupService {
 
     //Tworzenie grupy z WriteModelu
     public GroupReadModel createGroup(GroupWriteModel source){
-        TaskGroup result = repository.save(source.toGroup());
+     return createGroup(source,null);
+    }
+
+    GroupReadModel createGroup(GroupWriteModel source, Project project) {
+        TaskGroup result = repository.save(source.toGroup(project));
         return new GroupReadModel(result);
     }
 
@@ -44,4 +49,6 @@ public class TaskGroupService {
        result.setDone(!result.isDone());
        repository.save(result);
     }
+
+
 }
