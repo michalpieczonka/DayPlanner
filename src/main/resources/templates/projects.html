@@ -1,37 +1,65 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org">>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Day planer: projects</title>
     <link rel="stylesheet" href="https://unpkg.com/awsm.css/dist/awsm_theme_big-stone.min.css">
+    <style>
+        .Bd{
+            border: solid 1px black;
+        }
+
+        .P\(0\){
+            padding: 0;
+        }
+        .P\(10px\){
+            padding: 10px;
+        }
+        .C\(red\){
+            color: red;
+        }
+        .Bdc\(red\){
+            border-color: red !important;
+        }
+    </style>
 </head>
 <body>
 <main>
-    <!--/*thymesVar id="message" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="message" type="java.lang.String"*/-->
     <h1 th:if="${message != null}" th:text="${message}"></h1>
-    <!--/*thymesVar id="projects" type="java.util.List<one.pmsoft.dayplanner.model.Project>"*/-->
-    <dl th:each="project : ${projects}">
+    <!--/*@thymesVar id="projects" type="java.util.List<one.pmsoft.dayplanner.model.Project>"*/-->
+    <dl th:each="project : ${projects}" class="Bd P(10px)">
         <dt th:text="${project.description}">...</dt>
         <dd>
-            <ul>
+            <ul class="P(0)">
                 <li th:each="step : ${project.steps}" th:text="|${step.description} (${step.daysToDeadline} dni)|"></li>
             </ul>
+
+            <form action="#" method="post" th:action="@{/projects/{projectId}(projectId=${project.id})}" >
+                <label>Deadline
+                    <input name="deadline" type="datetime-local" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}">
+                </label>
+                <button type="submit">Utwórz grupę zadań</button>
+            </form>
+
         </dd>
     </dl>
-        <form action="#" method="post" th:action="@{/projects}" th:object="${project}">
+
             <fieldset>
-            <legend>Nowy projekt</legend>
+                <legend>Nowy projekt</legend>
+             <form action="#" method="post" th:action="@{/projects}" th:object="${project}">
+                 <p class="C(red)" th:if="${#fields.hasAnyErrors()}" th:errors="*{all}" >Niepoprawna zawartosc !</p>
                 <label>
-                    Opis <input type="text" th:field="*{description}"/>
+                    Opis <input type="text" th:field="*{description}" th:errorclass="'Bdc(red)'" />
                 </label>
                 <fieldset th:each="step, stepStat : *{steps}" >
                     <legend th:text="|Krok ${stepStat.index +1}|"></legend>
                     <label>
-                        Opis <input type="text" th:field="*{steps[__${stepStat.index}__].description}"/>
+                        Opis <input type="text" th:field="*{steps[__${stepStat.index}__].description}" th:errorclass="'Bdc(red)'" />
                     </label>
                     <label>
-                        Dni do końca zadania <input type="number" th:field="*{steps[__${stepStat.index}__].daysToDeadline}"/>
+                        Dni do końca zadania <input type="number" th:field="*{steps[__${stepStat.index}__].daysToDeadline}" th:errorclass="'Bdc(red)'" />
                     </label>
                 </fieldset>
                 <div>
